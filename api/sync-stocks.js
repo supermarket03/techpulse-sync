@@ -23,10 +23,7 @@ async function fetchStockData(symbol, retries = MAX_RETRIES) {
       const profile = quote.assetProfile ?? {};
 
       const pe_ratio =
-        stats.trailingPE ??
-        (stats.trailingEps && price.regularMarketPrice
-          ? price.regularMarketPrice / stats.trailingEps
-          : null);
+        stats.trailingPE ?? (stats.trailingEps && price.regularMarketPrice ? price.regularMarketPrice / stats.trailingEps : null);
 
       const volume_avg = detail.averageVolume ?? price.averageDailyVolume10Day ?? null;
 
