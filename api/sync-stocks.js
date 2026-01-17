@@ -1,5 +1,4 @@
-import YahooFinance from 'yahoo-finance2';
-const yahooFinance = new YahooFinance();
+import yahooFinance from 'yahoo-finance2';
 import { createClient } from '@supabase/supabase-js';
 
 const SYMBOLS = ['AAPL', 'MSFT', 'NVDA', 'META', 'GOOGL'];
@@ -24,7 +23,6 @@ async function fetchStockData(symbol, retries = MAX_RETRIES) {
 
       const pe_ratio =
         stats.trailingPE ?? (stats.trailingEps && price.regularMarketPrice ? price.regularMarketPrice / stats.trailingEps : null);
-
       const volume_avg = detail.averageVolume ?? price.averageDailyVolume10Day ?? null;
 
       return {
@@ -72,14 +70,14 @@ export default async function handler(req, res) {
         const stockData = await fetchStockData(symbol);
         const { error } = await supabase
           .from('daily_market_data')
-          .upsert(stockData, { onConflict: ['symbol', 'date'] });
+          .upsert(stockData, { onConflict: 'symbol,date' });
 
         if (error) throw new Error(error.message);
 
         results.successes.push({ symbol, price: stockData.price, market_cap: stockData.market_cap });
         console.log(`✓ ${symbol} done`);
-        if (i < SYMBOLS.length - 1) await delay(DELAY_MS);
 
+        if (i < SYMBOLS.length - 1) await delay(DELAY_MS);
       } catch (err) {
         console.error(`✗ ${symbol} failed:`, err.message);
         results.failures.push({ symbol, error: err.message });
@@ -87,7 +85,6 @@ export default async function handler(req, res) {
     }
 
     return res.status(200).json({ ...results, timestamp: new Date().toISOString() });
-
   } catch (err) {
     console.error('Fatal error:', err);
     return res.status(500).json({ error: err.message, ...results });
