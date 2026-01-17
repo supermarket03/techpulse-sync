@@ -1,5 +1,8 @@
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
 import { createClient } from '@supabase/supabase-js';
+
+// Instantiate YahooFinance for v3
+const yahooFinance = new YahooFinance();
 
 const SYMBOLS = ['AAPL', 'MSFT', 'NVDA', 'META', 'GOOGL'];
 const DELAY_MS = 500;
